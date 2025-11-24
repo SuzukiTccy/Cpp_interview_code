@@ -12,7 +12,7 @@ using namespace std;
 static mutex mtx; // 全局锁，用于打印，静态是为了限定范围，只有这个文件可用
 
 
-class ThreadPool{
+class ThreadsPool{
 private:
     void worker();  // 任务执行函数
     vector<thread> threadsPool; // 线程池
@@ -22,15 +22,15 @@ private:
     mutex queue_mtx; // 互斥锁
 
 public:
-    ThreadPool(size_t thread_num){
+    ThreadsPool(size_t thread_num){
         for(size_t i = 0; i < thread_num; ++i){
-            threadsPool.emplace_back(&ThreadPool::worker, this);
+            threadsPool.emplace_back(&ThreadsPool::worker, this);
         }
         cout << "ThreadPool is created having " << threadsPool.size() << " threads" << endl;
     }
 
     /* 析构函数 */
-    ~ThreadPool(){
+    ~ThreadsPool(){
         stop_flag.store(true);
         tasks_available.notify_all();
         for(auto& t : threadsPool){
@@ -66,14 +66,14 @@ public:
 };
 
 
-void ThreadPool::worker(){
+void ThreadsPool::worker(){
     function<void()> task;
     while(true){
         unique_lock<mutex> lock(queue_mtx);
         /*  wait()方法会一直阻塞，直到被notify_one()或者notify_all()唤醒 */
         tasks_available.wait(lock, [this](){ return !tasks_queue.empty() || stop_flag.load(); });
         if(stop_flag.load()) return;
-        task = std::move(tasks_queue.front());
+        task = std::move(tasks_queue.front()); // 使用移动可以避免拷贝开销
         tasks_queue.pop();
         lock.unlock();
         task();
@@ -98,10 +98,9 @@ void work_function(int task_id){
 }
 
 
-
-
 void threadpool(){
-    ThreadPool pool(10);
+    size_t max_thread_num = thread::hardware_concurrency();
+    ThreadsPool pool(max_thread_num);
     for(int task_id = 0; task_id < 20; ++task_id){
         pool.add_task(work_function, task_id);
         mtx.lock();
