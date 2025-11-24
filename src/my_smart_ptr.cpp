@@ -38,7 +38,7 @@ public:
     /* 重载箭头运算符 */
     T* operator->() const { return ptr; }
 
-    /* 重载获取原始指针 */
+    /* 获取原始指针 */
     T* get() const { return ptr; }
 
     /* 释放所有权，返回原始指针，智能指针不再管理资源 */
@@ -174,13 +174,8 @@ public:
         }
     }
 
-    /* 释放所有权，返回原始指针，智能指针不再管理资源 */
-    T* release() noexcept {
-        T* temp = ptr;
-        ptr = nullptr;
-        ref_count = nullptr;
-        return temp;
-    }
+    /* sharedPtr不应该有release(), 不安全, 有可能导致其他sharedPtr成为悬空指针 */
+    T* release() = delete;
 };
 
 
@@ -231,11 +226,5 @@ void my_shared_ptr(){
     cout << "*ptr4 = " << *ptr4 << endl; // 输出：20
     cout << "ptr3.use_count = " << ptr3.use_count() << endl; // 输出：0
     cout << "ptr4.use_count = " << ptr4.use_count() << endl; // 输出：1
-    cout << endl;
-
-    int *ptr5 = ptr4.release();
-    cout << "*ptr5 = " << *ptr5 << endl;
-    cout << "ptr4.use_count = " << ptr4.use_count() << endl;
-    delete ptr5; // 手动释放资源
     cout << endl;
 }
