@@ -14,7 +14,7 @@ public:
     ~Unique_ptr() { delete ptr; }
 
     /* 禁用拷贝构造函数和拷贝赋值运算符（独占所有权） */
-    Unique_ptr(const Unique_ptr&) = delete;
+    Unique_ptr(const Unique_ptr&) = delete; // 在类内，不需要加typename，在类外，需要加typename
     Unique_ptr& operator=(const Unique_ptr&) = delete;
 
     /* 移动构造函数和移动赋值运算符（转移所有权） */
