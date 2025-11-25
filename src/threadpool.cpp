@@ -99,6 +99,9 @@ void work_function(int task_id){
 
 
 void threadpool(){
+
+    cout << "=== 开始演示线程池 ===" << endl;
+
     size_t max_thread_num = thread::hardware_concurrency();
     ThreadsPool pool(max_thread_num);
     for(int task_id = 0; task_id < 20; ++task_id){
@@ -107,7 +110,11 @@ void threadpool(){
         cout << "Task_id: " << task_id << " is ready!" << endl;
         mtx.unlock();
     }
+    // 让系统运行一段时间
     this_thread::sleep_for(chrono::seconds(2));
+
     pool.stop();
+
+    cout << "=== 线程池演示结束 ===" << endl;
     
 }

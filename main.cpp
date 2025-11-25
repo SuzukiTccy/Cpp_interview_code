@@ -6,7 +6,7 @@ using namespace std;
 int main(){
 /*======================= 实现智能指针 ========================*/
     cout << "<=========== 实现智能指针 ===========>" << endl;
-    #if 1
+    #if 0
         my_unique_ptr();
         cout << endl;
         my_shared_ptr();
@@ -17,6 +17,13 @@ int main(){
     cout << "<=========== 实现线程池 ===========>" << endl;
     #if 0
         threadpool();
+        cout << endl;
+    #endif
+
+/*======================= 生产者消费者模型 ========================*/
+    cout << "<=========== 生产者消费者模型 ===========>" << endl;
+    #if 1
+        producerConsumer();
         cout << endl;
     #endif
 
